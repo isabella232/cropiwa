@@ -73,6 +73,16 @@ public class CropIwaSaveConfig {
             return this;
         }
 
+        public Builder setHeight(int height) {
+            saveConfig.height = height;
+            return this;
+        }
+
+        public Builder setWidth(int width) {
+            saveConfig.width = width;
+            return this;
+        }
+
         public CropIwaSaveConfig build() {
             return saveConfig;
         }

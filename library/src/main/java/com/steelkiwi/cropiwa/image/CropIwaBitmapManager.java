@@ -26,7 +26,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.steelkiwi.cropiwa.util.CropIwaUtils.*;
+import static com.steelkiwi.cropiwa.util.CropIwaUtils.closeSilently;
 
 /**
  * @author Yaroslav Polyakov https://github.com/polyak01
@@ -186,6 +186,7 @@ public class CropIwaBitmapManager {
             return getOptimalSizeOptions(c, uri, width, height);
         } else {
             BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.RGB_565;
             options.inSampleSize = 1;
             return options;
         }
@@ -195,22 +196,26 @@ public class CropIwaBitmapManager {
             Context context, Uri bitmapUri,
             int reqWidth, int reqHeight) throws FileNotFoundException {
         InputStream is = context.getContentResolver().openInputStream(bitmapUri);
+
         BitmapFactory.Options result = new BitmapFactory.Options();
+        result.inPreferredConfig = Bitmap.Config.RGB_565;
         result.inJustDecodeBounds = true;
+
         BitmapFactory.decodeStream(is, null, result);
+
         result.inJustDecodeBounds = false;
         result.inSampleSize = calculateInSampleSize(result, reqWidth, reqHeight);
+
         return result;
     }
 
     private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        final int height = options.outHeight;
-        final int width = options.outWidth;
+        final int bitmapHeight = options.outHeight;
+        final int bitmapWidth = options.outWidth;
         int inSampleSize = 1;
-        if (height > reqHeight || width > reqWidth) {
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+        if (bitmapHeight > reqHeight || bitmapWidth > reqWidth) {
+            while ((bitmapHeight / inSampleSize) >= reqHeight
+                    && (bitmapWidth / inSampleSize) >= reqWidth) {
                 inSampleSize *= 2;
             }
         }
