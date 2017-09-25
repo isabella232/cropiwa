@@ -186,6 +186,7 @@ public class CropIwaBitmapManager {
             return getOptimalSizeOptions(c, uri, width, height);
         } else {
             BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.RGB_565;
             options.inSampleSize = 1;
             return options;
         }
@@ -195,11 +196,16 @@ public class CropIwaBitmapManager {
             Context context, Uri bitmapUri,
             int reqWidth, int reqHeight) throws FileNotFoundException {
         InputStream is = context.getContentResolver().openInputStream(bitmapUri);
+
         BitmapFactory.Options result = new BitmapFactory.Options();
+        result.inPreferredConfig = Bitmap.Config.RGB_565;
         result.inJustDecodeBounds = true;
+
         BitmapFactory.decodeStream(is, null, result);
+
         result.inJustDecodeBounds = false;
         result.inSampleSize = calculateInSampleSize(result, reqWidth, reqHeight);
+
         return result;
     }
 
